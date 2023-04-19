@@ -1,25 +1,24 @@
 const fs = require('fs');
 
-let readLine = require('readline').createInterface({
-    input: process.stdin,
-    output: process.stdout,
-});
-
 const arrayDigits = [
     [1, 2, 3],
     [4, 5, 6],
     [7, 8, 9]
 ];
 
-const decodedPassword = [];
 let row = 1;
 let column = 1;
 
+
+// A recursive function that takes:
+// a string representing a line of the random combinations of U, D, R and L
+// a digit that represents the last found digit from the previous line
 function decode(line, digit) {
     // base case;
     if (line.length === 0) {
         return digit;
     }
+    // here we extract the first letter and we navigate according to it
     switch (line[0]) {
         case 'U':
             if (column >= 1) {
@@ -48,10 +47,19 @@ function decode(line, digit) {
         default:
             throw Error("File contains unknown characters")
     }
-    return decode(line.substring(1, line.length), digit, row, column);
+    // here, the recursive function takes that line with a substraction of the first processed letter
+    return decode(line.substring(1, line.length), digit);
 }
 
+
+// this function reads a text file containing random combinations of U, D, R and L
+// and runs decode function on every line
 function readTextFile(fileName) {
+    const decodedPassword = [];
+    let readLine = require('readline').createInterface({
+        input: process.stdin,
+        output: process.stdout,
+    });
     const fileBuffer = fs.readFileSync(fileName, 'utf-8');
     // split the file's content by line
     fileBuffer.split(/\r?\n/).forEach((line) => {
